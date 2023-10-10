@@ -35,16 +35,29 @@ class Dash_SalesMain extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Responsive.isDesktop(context)
-                    ? Text(
-                        "Today Sales & Purchase",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )
-                    : Text(
-                        "Today Sales",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )),
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Responsive.isDesktop(context)
+                  ? Text(
+                      "Today Sales & Purchase",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )
+                  : Text(
+                      "Today Sales",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: defaultPadding),
+              child: Row(
+                children: [
+                  Text(
+                    " * Tap to view details",
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         SizedBox(height: defaultPadding),

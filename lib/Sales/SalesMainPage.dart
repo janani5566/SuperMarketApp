@@ -1,3 +1,4 @@
+import 'package:SuperMarket/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:SuperMarket/IpAddress/database_helper.dart';
@@ -60,22 +61,29 @@ class _SalesPageState extends State<SalesPage> {
   int totalSalesBill = 0;
 
   Future<void> fetchTodaySalesBill() async {
+    // Fetch the API URL from SharedPreferences or another source
     String? ipAddress = await SharedPrefs.getIpAddress();
-
     String apiUrl = 'http://$ipAddress/Sales/';
-    http.Response response = await http.get(Uri.parse(apiUrl));
-    var data = json.decode(response.body);
 
-    // Assuming the JSON response is an object
-    if (data is Map<String, dynamic>) {
-      var salesBill = data['today_Bill_count'];
-      double bill = salesBill as double;
-      totalSalesBill = bill.toInt();
-    }
-    if (mounted) {
-      setState(() {
-        totalSalesBill = totalSalesBill;
-      });
+    // Make an HTTP GET request
+    http.Response response = await http.get(Uri.parse(apiUrl));
+
+    // Check if the response status code is 200 (OK)
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      var data = json.decode(response.body);
+
+      // Assuming the JSON response is an object
+      if (data is Map<String, dynamic>) {
+        var todayBillCount = data['today_Bill_count'];
+
+        // Check if todayBillCount is an integer
+        if (todayBillCount is int) {
+          setState(() {
+            totalSalesBill = todayBillCount;
+          });
+        }
+      }
     }
   }
 
@@ -127,12 +135,6 @@ class _SalesPageState extends State<SalesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: Responsive.isDesktop(context)
-          ? null
-          : AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
       body: Center(
         child: Row(
           children: [
@@ -149,6 +151,29 @@ class _SalesPageState extends State<SalesPage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            " * Tap to view details",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium!
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: defaultPadding,
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -637,7 +662,7 @@ class _ContainerWidgetState extends State<ContainerWidget> {
       children: [
         Padding(
           padding: Responsive.isDesktop(context)
-              ? EdgeInsets.only(top: 38.0, left: 0.0)
+              ? EdgeInsets.only(top: 18.0, left: 0.0)
               : EdgeInsets.only(top: 18.0, left: 0.0),
           child: Column(
             children: [

@@ -43,21 +43,27 @@ class _HeadWidgetState extends State<HeadWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (!Responsive.isDesktop(context))
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 118.0, top: 5.0),
-              child: Text(
-                shopNames,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w800),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (!Responsive.isDesktop(context))
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 0, top: 0),
+                  child: Text(
+                    shopNames,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Colors.black, fontWeight: FontWeight.w800),
+                  ),
+                ),
               ),
-            ),
-          ),
+          ],
+        ),
         if (!Responsive.isMobile(context))
           Text(
             "Dashboard",

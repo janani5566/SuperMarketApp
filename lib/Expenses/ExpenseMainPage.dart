@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:SuperMarket/Expenses/ExpenseMonthlySubForm.dart';
 import 'package:SuperMarket/Expenses/ExpenseSubForm.dart';
 import 'package:SuperMarket/Expenses/ExpenseWeeklySubForm.dart';
 import 'package:SuperMarket/IpAddress/database_helper.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:SuperMarket/config/responsive.dart';
+import 'package:SuperMarket/controllers/MenuAppController.dart';
+import 'package:SuperMarket/screens/main/components/side_menu.dart';
+import 'package:SuperMarket/screens/main/main_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -102,181 +108,212 @@ class _ExpensePageState extends State<ExpensePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  color: Colors.black,
-                ),
-              ],
-            ),
-            // Section 1: Header
-            Container(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  'Today Expenses',
-                  style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
+      body: Row(
+        children: [
+          if (Responsive.isDesktop(context))
+            Expanded(
+              flex: 2,
+              child: Container(
+                color: Colors.grey[200], // Adjust color as needed
+                child: SideMenu(),
               ),
             ),
-
-            // Section 2: Image
-            Container(
-              width: 150.0,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 64, 113, 153),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.all(16.0),
+          Expanded(
+            flex: 10,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Center(
-                    child: Image.asset(
-                      'assets/images/bill_sales.png', // Replace with your image asset
-                      height: 50,
-                    ),
-                  ),
                   SizedBox(
-                    height: 10,
+                    height: 15,
                   ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 224, 234, 240)), // Custom color
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TodaySaleExpensePage()));
-                    },
-                    child: Text(
-                      '₹ $totalSalesExpenses .0',
-                      style: TextStyle(color: Colors.black),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (_) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider(
+                                    create: (context) => MenuAppController(),
+                                  ),
+                                ],
+                                child: MainScreen(),
+                              ),
+                            ),
+                          );
+                        },
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                  // Section 1: Header
+                  Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        'Today Expenses',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
+
+                  // Section 2: Image
+                  Container(
+                    width: 150.0,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 64, 113, 153),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            'assets/images/bill_sales.png', // Replace with your image asset
+                            height: 50,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(
+                                    255, 224, 234, 240)), // Custom color
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        TodaySaleExpensePage()));
+                          },
+                          child: Text(
+                            '₹ $totalSalesExpenses .0',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        'Current Week Expenses',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 150.0,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 64, 113, 153),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            'assets/images/bill_sales.png', // Replace with your image asset
+                            height: 50,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(
+                                    255, 224, 234, 240)), // Custom color
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => WeekExpensePage()));
+                          },
+                          child: Text(
+                            '₹ $totalExpenseCurrentWeek .0',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        'Current Month Expenses',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 150.0,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 64, 113, 153),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            'assets/images/bill_sales.png', // Replace with your image asset
+                            height: 50,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(
+                                    255, 224, 234, 240)), // Custom color
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MonthlyExpensePage()));
+                          },
+                          child: Text(
+                            '₹ $totalExpenseAmountThisMonth .0',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Section 3: Text
+
+                  // Section 4: Buttons
+
+                  // Section 5: Footer
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  'Current Week Expenses',
-                  style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            Container(
-              width: 150.0,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 64, 113, 153),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Center(
-                    child: Image.asset(
-                      'assets/images/bill_sales.png', // Replace with your image asset
-                      height: 50,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 224, 234, 240)), // Custom color
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WeekExpensePage()));
-                    },
-                    child: Text(
-                      '₹ $totalExpenseCurrentWeek .0',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  'Current Month Expenses',
-                  style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            Container(
-              width: 150.0,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 64, 113, 153),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Center(
-                    child: Image.asset(
-                      'assets/images/bill_sales.png', // Replace with your image asset
-                      height: 50,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 224, 234, 240)), // Custom color
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MonthlyExpensePage()));
-                    },
-                    child: Text(
-                      '₹ $totalExpenseAmountThisMonth .0',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Section 3: Text
-
-            // Section 4: Buttons
-
-            // Section 5: Footer
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

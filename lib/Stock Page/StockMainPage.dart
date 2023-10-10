@@ -83,6 +83,23 @@ class _CatNameScreenState extends State<CatNameScreen> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        " * Tap to view details",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium!
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
                 itemTitles.isEmpty
                     ? Center(
                         child: CircularProgressIndicator(),
@@ -357,7 +374,7 @@ class _ProductTablePageState extends State<ProductTablePage> {
                 bool isEvenRow = tableData.indexOf(data) % 2 == 0;
                 Color? rowColor = isEvenRow
                     ? Color.fromARGB(224, 255, 255, 255)
-                    : Color.fromARGB(255, 127, 161, 206);
+                    : Color.fromARGB(255, 174, 204, 228);
 
                 return Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),

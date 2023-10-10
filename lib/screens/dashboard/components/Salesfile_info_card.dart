@@ -1,4 +1,8 @@
 import 'package:SuperMarket/IpAddress/database_helper.dart';
+import 'package:SuperMarket/Purchase/PurchaseBill.dart';
+import 'package:SuperMarket/Purchase/PurchasePaymentdetail.dart';
+import 'package:SuperMarket/Sales/SalesBillSubForm.dart';
+import 'package:SuperMarket/Sales/SalesProductSubForm.dart';
 import 'package:SuperMarket/screens/dashboard/components/Dash_SalesCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,22 +56,29 @@ class _FileInfoCardState extends State<FileInfoCard> {
   int totalSalesBill = 0;
 
   Future<void> fetchTodaySalesBill() async {
+    // Fetch the API URL from SharedPreferences or another source
     String? ipAddress = await SharedPrefs.getIpAddress();
-
     String apiUrl = 'http://$ipAddress/Sales/';
-    http.Response response = await http.get(Uri.parse(apiUrl));
-    var data = json.decode(response.body);
 
-    // Assuming the JSON response is an object
-    if (data is Map<String, dynamic>) {
-      var salesBill = data['today_Bill_count'];
-      double bill = salesBill as double;
-      totalSalesBill = bill.toInt();
-    }
-    if (mounted) {
-      setState(() {
-        totalSalesBill = totalSalesBill;
-      });
+    // Make an HTTP GET request
+    http.Response response = await http.get(Uri.parse(apiUrl));
+
+    // Check if the response status code is 200 (OK)
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      var data = json.decode(response.body);
+
+      // Assuming the JSON response is an object
+      if (data is Map<String, dynamic>) {
+        var todayBillCount = data['today_Bill_count'];
+
+        // Check if todayBillCount is an integer
+        if (todayBillCount is int) {
+          setState(() {
+            totalSalesBill = todayBillCount;
+          });
+        }
+      }
     }
   }
 
@@ -98,155 +109,174 @@ class _FileInfoCardState extends State<FileInfoCard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          width: Responsive.isDesktop(context)
-              ? MediaQuery.of(context).size.width *
-                  0.14 // Adjust this value as needed
-              : MediaQuery.of(context).size.width * 0.44,
-          padding: EdgeInsets.all(defaultPadding),
-          decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border.all(
-                color: Color.fromARGB(255, 64, 113, 153),
-              )),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(defaultPadding * 0.75),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFFF4081).withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SalesBill(), // Replace with your page
+            ));
+          },
+          child: Container(
+            width: Responsive.isDesktop(context)
+                ? MediaQuery.of(context).size.width *
+                    0.14 // Adjust this value as needed
+                : MediaQuery.of(context).size.width * 0.44,
+            padding: EdgeInsets.all(defaultPadding),
+            decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                border: Border.all(
+                  color: Color.fromARGB(255, 64, 113, 153),
+                )),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(defaultPadding * 0.75),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
                           color: Color(0xFFFF4081).withOpacity(0.1),
-                        )),
-                    child: SvgPicture.asset(
-                      "assets/icons/food-bag.svg",
-                      colorFilter: ColorFilter.mode(
-                          Color(0xFFFF4081) ?? Colors.black, BlendMode.srcIn),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                            color: Color(0xFFFF4081).withOpacity(0.1),
+                          )),
+                      child: SvgPicture.asset(
+                        "assets/icons/food-bag.svg",
+                        colorFilter: ColorFilter.mode(
+                            Color(0xFFFF4081) ?? Colors.black, BlendMode.srcIn),
+                      ),
                     ),
-                  ),
-                  Icon(Icons.more_vert, color: Colors.black)
-                ],
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Text(
-                'Sales : ₹ $totalSalesAmount .0 ',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              ProgressLine(
-                color: Color(0xFFFF4081),
-                percentage: 77,
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Bills : $totalSalesBill",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              )
-            ],
+                    Icon(
+                      Icons.star,
+                      color: Colors.black,
+                      size: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Text(
+                  'Sales : ₹ $totalSalesAmount .0 ',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                ProgressLine(
+                  color: Color(0xFFFF4081),
+                  percentage: 77,
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Bills : $totalSalesBill",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         SizedBox(
           width: Responsive.isDesktop(context) ? 6 : 12,
         ),
-        Container(
-          width: Responsive.isDesktop(context)
-              ? MediaQuery.of(context).size.width *
-                  0.13 // Adjust this value as needed
-              : MediaQuery.of(context).size.width * 0.44,
-          padding: EdgeInsets.all(defaultPadding),
-          decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border.all(
-                color: Color.fromARGB(255, 64, 113, 153),
-              )),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(defaultPadding * 0.75),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        color: Color(0xFF00897B).withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  SalesProductPage(), // Replace with your page
+            ));
+          },
+          child: Container(
+            width: Responsive.isDesktop(context)
+                ? MediaQuery.of(context).size.width *
+                    0.13 // Adjust this value as needed
+                : MediaQuery.of(context).size.width * 0.44,
+            padding: EdgeInsets.all(defaultPadding),
+            decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                border: Border.all(
+                  color: Color.fromARGB(255, 64, 113, 153),
+                )),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(defaultPadding * 0.75),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
                           color: Color(0xFF00897B).withOpacity(0.1),
-                        )),
-                    child: SvgPicture.asset(
-                      "assets/icons/groceries.svg",
-                      colorFilter: ColorFilter.mode(
-                          Color(0xFF00897B) ?? Colors.black, BlendMode.srcIn),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                            color: Color(0xFF00897B).withOpacity(0.1),
+                          )),
+                      child: SvgPicture.asset(
+                        "assets/icons/groceries.svg",
+                        colorFilter: ColorFilter.mode(
+                            Color(0xFF00897B) ?? Colors.black, BlendMode.srcIn),
+                      ),
                     ),
-                  ),
-                  Icon(Icons.more_vert, color: Colors.black)
-                ],
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Text(
-                'Products',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              ProgressLine(
-                color: Color(0xFF00897B),
-                percentage: 60,
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "$totalSaleProduct",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              )
-            ],
+                    Icon(
+                      Icons.star,
+                      color: Colors.black,
+                      size: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Text(
+                  'Products',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                ProgressLine(
+                  color: Color(0xFF00897B),
+                  percentage: 60,
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "$totalSaleProduct",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ],
@@ -296,22 +326,29 @@ class _FileInfoCard2State extends State<FileInfoCard2> {
   int totalPurchaseBill = 0;
 
   Future<void> fetchTodayPurchaseBill() async {
+    // Fetch the API URL from SharedPreferences or another source
     String? ipAddress = await SharedPrefs.getIpAddress();
-
     String apiUrl = 'http://$ipAddress/purchase/';
-    http.Response response = await http.get(Uri.parse(apiUrl));
-    var data = json.decode(response.body);
 
-    // Assuming the JSON response is an object
-    if (data is Map<String, dynamic>) {
-      var PurBillToday = data['today_Bill_count'];
-      double PurBill = PurBillToday as double;
-      totalPurchaseBill = PurBill.toInt();
-    }
-    if (mounted) {
-      setState(() {
-        totalPurchaseBill = totalPurchaseBill;
-      });
+    // Make an HTTP GET request
+    http.Response response = await http.get(Uri.parse(apiUrl));
+
+    // Check if the response status code is 200 (OK)
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      var data = json.decode(response.body);
+
+      // Assuming the JSON response is an object
+      if (data is Map<String, dynamic>) {
+        var todayBillCount = data['today_Bill_count'];
+
+        // Check if todayBillCount is an integer
+        if (todayBillCount is int) {
+          setState(() {
+            totalPurchaseBill = todayBillCount;
+          });
+        }
+      }
     }
   }
 
@@ -342,156 +379,176 @@ class _FileInfoCard2State extends State<FileInfoCard2> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          width: Responsive.isDesktop(context)
-              ? MediaQuery.of(context).size.width *
-                  0.14 // Adjust this value as needed
-              : MediaQuery.of(context).size.width * 0.44,
-          padding: EdgeInsets.all(defaultPadding),
-          decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border.all(
-                color: Color.fromARGB(255, 64, 113, 153),
-              )),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(defaultPadding * 0.75),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFE040FB).withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  TodayPurchaseBillPage(), // Replace with your page
+            ));
+          },
+          child: Container(
+            width: Responsive.isDesktop(context)
+                ? MediaQuery.of(context).size.width *
+                    0.14 // Adjust this value as needed
+                : MediaQuery.of(context).size.width * 0.44,
+            padding: EdgeInsets.all(defaultPadding),
+            decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                border: Border.all(
+                  color: Color.fromARGB(255, 64, 113, 153),
+                )),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(defaultPadding * 0.75),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
                           color: Color(0xFFE040FB).withOpacity(0.1),
-                        )),
-                    child: SvgPicture.asset(
-                      "assets/icons/shopping.svg",
-                      colorFilter: ColorFilter.mode(
-                          Color(0xFFE040FB) ?? Colors.black, BlendMode.srcIn),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                            color: Color(0xFFE040FB).withOpacity(0.1),
+                          )),
+                      child: SvgPicture.asset(
+                        "assets/icons/shopping.svg",
+                        colorFilter: ColorFilter.mode(
+                            Color(0xFFE040FB) ?? Colors.black, BlendMode.srcIn),
+                      ),
                     ),
-                  ),
-                  Icon(Icons.more_vert, color: Colors.black)
-                ],
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Text(
-                'Purchase :  ₹ $totalPurchaseAmount.0 ',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              ProgressLine(
-                color: Color(0xFFE040FB),
-                percentage: 23,
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Bills : $totalPurchaseBill  ",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              )
-            ],
+                    Icon(
+                      Icons.star,
+                      color: Colors.black,
+                      size: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Text(
+                  'Purchase:₹$totalPurchaseAmount.0 ',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                ProgressLine(
+                  color: Color(0xFFE040FB),
+                  percentage: 23,
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Bills : $totalPurchaseBill  ",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         SizedBox(
           width: Responsive.isDesktop(context) ? 6 : 12,
         ),
-        Container(
-          width: Responsive.isDesktop(context)
-              ? MediaQuery.of(context).size.width *
-                  0.14 // Adjust this value as needed
-              : MediaQuery.of(context).size.width * 0.44,
-          padding: EdgeInsets.all(defaultPadding),
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            border: Border.all(
-              color: Color.fromARGB(255, 64, 113, 153),
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  TodayPurchasePaymentPage(), // Replace with your page
+            ));
+          },
+          child: Container(
+            width: Responsive.isDesktop(context)
+                ? MediaQuery.of(context).size.width *
+                    0.14 // Adjust this value as needed
+                : MediaQuery.of(context).size.width * 0.44,
+            padding: EdgeInsets.all(defaultPadding),
+            decoration: BoxDecoration(
+              color: secondaryColor,
+              border: Border.all(
+                color: Color.fromARGB(255, 64, 113, 153),
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(defaultPadding * 0.75),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        color: Color(0xFF007EE5).withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(defaultPadding * 0.75),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
                           color: Color(0xFF007EE5).withOpacity(0.1),
-                        )),
-                    child: SvgPicture.asset(
-                      "assets/icons/Payment.svg",
-                      colorFilter: ColorFilter.mode(
-                          Color(0xFF007EE5) ?? Colors.black, BlendMode.srcIn),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                            color: Color(0xFF007EE5).withOpacity(0.1),
+                          )),
+                      child: SvgPicture.asset(
+                        "assets/icons/Payment.svg",
+                        colorFilter: ColorFilter.mode(
+                            Color(0xFF007EE5) ?? Colors.black, BlendMode.srcIn),
+                      ),
                     ),
-                  ),
-                  Icon(Icons.more_vert, color: Colors.black)
-                ],
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Text(
-                'Payments',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              ProgressLine(
-                color: Color(0xFF007EE5),
-                percentage: 33,
-              ),
-              SizedBox(
-                height: defaultPadding,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "₹$totalPurchasePayment.0",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              )
-            ],
+                    Icon(
+                      Icons.star,
+                      color: Colors.black,
+                      size: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Text(
+                  'Payments',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                ProgressLine(
+                  color: Color(0xFF007EE5),
+                  percentage: 33,
+                ),
+                SizedBox(
+                  height: defaultPadding,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "₹$totalPurchasePayment.0",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ],

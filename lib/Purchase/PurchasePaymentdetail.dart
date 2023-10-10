@@ -24,7 +24,7 @@ class _TodayPurchasePaymentPageState extends State<TodayPurchasePaymentPage> {
   }
 
   Future<void> fetchData() async {
-            String? ipAddress = await SharedPrefs.getIpAddress();
+    String? ipAddress = await SharedPrefs.getIpAddress();
 
     String apiUrl = 'http://$ipAddress/purchase-payment/';
     http.Response response = await http.get(Uri.parse(apiUrl));
@@ -50,23 +50,23 @@ class _TodayPurchasePaymentPageState extends State<TodayPurchasePaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   title: Text(
-      //     'Details(Today PurchasePayment)',
-      //     style: GoogleFonts.crimsonText(
-      //       color: Colors.white,
-      //       fontSize: 21,
-      //       fontWeight: FontWeight.w800,
-      //     ),
-      //   ),
-      //   backgroundColor: Color.fromARGB(255, 42, 38, 75),
-      //   leading: IconButton(
-      //       onPressed: () {
-      //         Navigator.pop(context);
-      //       },
-      //       icon: Icon(Icons.arrow_back, color: Colors.white)),
-      // ),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Details(Today PurchasePayment)',
+          style: GoogleFonts.crimsonText(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 210, 230, 247),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back, color: Colors.black)),
+      ),
       body: SingleChildScrollView(
         controller: controller,
         child: Container(

@@ -19,15 +19,15 @@ class _Monthly_dashState extends State<Monthly_dash> {
   @override
   void initState() {
     super.initState();
-    fetchTotalAmountThisWeek();
-    fetchTotalAmountLastWeek();
+    fetchTotalAmountThisMonth();
+    fetchTotalAmountLastMonth();
     fetchTotalAmountThisMonthPurchase();
     fetchTotalAmountLastMonthPurchase();
   }
 
-  int totalAmountSalesCurrentWeek = 0;
+  int totalAmountSalesCurrentMonth = 0;
 
-  Future<void> fetchTotalAmountThisWeek() async {
+  Future<void> fetchTotalAmountThisMonth() async {
     String? ipAddress = await SharedPrefs.getIpAddress();
 
     String apiUrl = 'http://$ipAddress/Sales/';
@@ -36,20 +36,20 @@ class _Monthly_dashState extends State<Monthly_dash> {
 
     // Assuming the JSON response is an object
     if (data is Map<String, dynamic>) {
-      var salesFinalAmountToday = data['sales_finalamount_current_week'];
+      var salesFinalAmountToday = data['sales_finalamount_current_month'];
       double amount = salesFinalAmountToday as double;
-      totalAmountSalesCurrentWeek = amount.toInt();
+      totalAmountSalesCurrentMonth = amount.toInt();
     }
     if (mounted) {
       setState(() {
-        totalAmountSalesCurrentWeek = totalAmountSalesCurrentWeek;
+        totalAmountSalesCurrentMonth = totalAmountSalesCurrentMonth;
       });
     }
   }
 
-  int totalAmountLastWeek = 0;
+  int totalAmountLastMonth = 0;
 
-  Future<void> fetchTotalAmountLastWeek() async {
+  Future<void> fetchTotalAmountLastMonth() async {
     String? ipAddress = await SharedPrefs.getIpAddress();
 
     String apiUrl = 'http://$ipAddress/Sales/';
@@ -58,13 +58,13 @@ class _Monthly_dashState extends State<Monthly_dash> {
 
     // Assuming the JSON response is an object
     if (data is Map<String, dynamic>) {
-      var LastWeek = data['sales_finalamount_previous_week'];
-      double Lastamount = LastWeek as double;
-      totalAmountLastWeek = Lastamount.toInt();
+      var LastMonth = data['sales_finalamount_last_month'];
+      double Lastamount = LastMonth as double;
+      totalAmountLastMonth = Lastamount.toInt();
     }
     if (mounted) {
       setState(() {
-        totalAmountLastWeek = totalAmountLastWeek;
+        totalAmountLastMonth = totalAmountLastMonth;
       });
     }
   }
@@ -80,7 +80,7 @@ class _Monthly_dashState extends State<Monthly_dash> {
 
     // Assuming the JSON response is an object
     if (data is Map<String, dynamic>) {
-      var thisMonth = data['purchase_amount_current_week'];
+      var thisMonth = data['purchase_amount_current_month'];
       double Monthamount = thisMonth as double;
       totalAmountThisMonthP = Monthamount.toInt();
     }
@@ -102,7 +102,7 @@ class _Monthly_dashState extends State<Monthly_dash> {
 
     // Assuming the JSON response is an object
     if (data is Map<String, dynamic>) {
-      var lastMonth = data['purchase_amount_previous_week'];
+      var lastMonth = data['purchase_amount_last_month'];
       double Month1amount = lastMonth as double;
       totalAmountLastMonthP = Month1amount.toInt();
     }
@@ -128,13 +128,13 @@ class _Monthly_dashState extends State<Monthly_dash> {
             svgSrc: "assets/images/payment.png",
             title: "Current Month Sales",
             amountOfFiles: "1.3GB",
-            numOfFiles: totalAmountSalesCurrentWeek,
+            numOfFiles: totalAmountSalesCurrentMonth,
           ),
           monthlyInfoCard(
             svgSrc: "assets/images/products.png",
             title: "Last Month Sales",
             amountOfFiles: "15.3GB",
-            numOfFiles: totalAmountLastWeek,
+            numOfFiles: totalAmountLastMonth,
           ),
           monthlyInfoCard(
             svgSrc: "assets/images/purchase.png",

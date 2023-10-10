@@ -65,22 +65,29 @@ class _PurchasePageState extends State<PurchasePage> {
   int totalPurchaseBill = 0;
 
   Future<void> fetchTodayPurchaseBill() async {
+    // Fetch the API URL from SharedPreferences or another source
     String? ipAddress = await SharedPrefs.getIpAddress();
-
     String apiUrl = 'http://$ipAddress/purchase/';
-    http.Response response = await http.get(Uri.parse(apiUrl));
-    var data = json.decode(response.body);
 
-    // Assuming the JSON response is an object
-    if (data is Map<String, dynamic>) {
-      var PurBillToday = data['today_Bill_count'];
-      double PurBill = PurBillToday as double;
-      totalPurchaseBill = PurBill.toInt();
-    }
-    if (mounted) {
-      setState(() {
-        totalPurchaseBill = totalPurchaseBill;
-      });
+    // Make an HTTP GET request
+    http.Response response = await http.get(Uri.parse(apiUrl));
+
+    // Check if the response status code is 200 (OK)
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      var data = json.decode(response.body);
+
+      // Assuming the JSON response is an object
+      if (data is Map<String, dynamic>) {
+        var todayBillCount = data['today_Bill_count'];
+
+        // Check if todayBillCount is an integer
+        if (todayBillCount is int) {
+          setState(() {
+            totalPurchaseBill = todayBillCount;
+          });
+        }
+      }
     }
   }
 

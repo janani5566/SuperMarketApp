@@ -15,10 +15,10 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+8
+version: 1.0.0+18
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -29,25 +29,28 @@ dependencies:
   cupertino_icons: ^1.0.3
   shared_preferences: ^2.0.0
   google_fonts: ^4.0.4
-  flutter_svg: ^2.0.5
-  fl_chart: ^0.62.0
-  http: ^0.13.3
+  fl_chart: ^0.63.0
+  http: ^0.13.1
   provider: ^6.0.5
   intl: ^0.18.1
   scrollable: ^1.0.4
   carousel_slider: ^4.2.1
   flutter_tagging: ^3.0.0
+  xml: ^6.0.3
+  flutter_svg: ^2.0.7
+  upgrader: ^6.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.9.3
+  flutter_launcher_icons: ^0.13.1
+flutter_app_version_checker:
+  package_name: com.BuypRetail.SuperMarket
 
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo1.png" 
-
+  image_path: "assets/images/logo1.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

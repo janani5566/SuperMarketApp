@@ -2,6 +2,7 @@ import 'package:SuperMarket/constants.dart';
 import 'package:SuperMarket/controllers/MenuAppController.dart';
 import 'package:SuperMarket/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:SuperMarket/IpAddress/IpScreen.dart';
@@ -9,6 +10,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:SuperMarket/IpAddress/database_helper.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,14 +22,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'SuperMarketApp',
+      title: 'SupermarketApp',
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: bgColor,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
             .apply(bodyColor: Colors.black),
         canvasColor: secondaryColor,
       ),
-      home: SplashScreen(),
+      home: Container(
+          color: const Color.fromRGBO(255, 255, 255, 1),
+          child: UpgradeAlert(
+              // upgrader: Upgrader(
+              //   durationUntilAlertAgain: const Duration(seconds: 5),
+              //   shouldPopScope: () => true,
+              //   onIgnore: () {
+              //     SystemNavigator.pop();
+              //     throw UnsupportedError('_');
+              //   },
+              // ),
+              child: SplashScreen())),
     );
   }
 }
@@ -100,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ],
             ),
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ],
         ),
